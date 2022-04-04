@@ -9,7 +9,10 @@ def ShowFunction( myList ):
         if(myList[index]!=0):
             if(myList[index]>0 and index!=len(myList)-1):
                 print("+", end="")
-            print(str(myList[index])+"x^"+str(index), end="")
+            if(index==0):
+                print(str(myList[index]), end="")
+            else :
+                print(str(myList[index])+"x^"+str(index), end="")
     print("\n")
 
 
@@ -77,8 +80,8 @@ coefficient_dify = 0
 
 
 # ---------輸入各項繪圖參數---------
-start_paint_form = float(input("輸入繪製圖型的 x 軸左端點："))
-start_paint_to   = float(input("輸入繪製圖型的 x 軸右端點："))
+start_paint_form = float(input("輸入繪製圖形的 x 軸左端點："))
+start_paint_to   = float(input("輸入繪製圖形的 x 軸右端點："))
 x = np.linspace(start_paint_form, start_paint_to, 500)
 
 
@@ -113,33 +116,47 @@ def Value_coefficient_dify( input_x ):
 # ---------輸入初始值 Xn ---------
 Xn = float(input("輸入初始近似值Xn："))         # 通常以勘根或觀察選出
 
-pl.vlines(Xn, 0, Value_coefficient_y(Xn), colors='green', label = "x = Xn")     # 畫從 y=0 到 y=f(Xn) 的鉛直線
-n = 10
-while(n):
+while(True):
 
-    Xn1 = Xn - Value_coefficient_y(Xn)/Value_coefficient_dify(Xn)               # 用公式找到 Xn1 (更接近根的近似值)
-    print(Value_coefficient_y(Xn))
-    print(Value_coefficient_dify(Xn))
-    print(Xn1)
+    pl.vlines(Xn, 0, Value_coefficient_y(Xn), colors='green', label = "x = Xn")     # 畫從 y=0 到 y=f(Xn) 的鉛直線
+    counter = 500
+    while(counter):
 
-    difx = np.linspace(Xn1, Xn, 500)                # 給定 difx 為從 Xn1 到 Xn 
-    dify = (Value_coefficient_dify(Xn))*(difx-Xn)+Value_coefficient_y(Xn)       # 由點斜式找到 dify (從切線方程式回推 dify )
+        Xn1 = Xn - Value_coefficient_y(Xn)/Value_coefficient_dify(Xn)               # 用公式找到 Xn1 (更接近根的近似值)
+        print("Value X", 501-counter, "=", Xn1)
 
-    pl.plot(difx, dify, color = "blue")        # 畫 f(x) 在 x=Xn 處的切線Tangent
+        difx = np.linspace(Xn1, Xn, 500)                # 給定 difx 為從 Xn1 到 Xn 
+        dify = (Value_coefficient_dify(Xn))*(difx-Xn)+Value_coefficient_y(Xn)       # 由點斜式找到 dify (從切線方程式回推 dify )
 
-    pl.vlines(Xn1, 0, Value_coefficient_y(Xn1), colors='green')           # 畫從 y=0 到 y=f(Xn1) 的鉛直線
-    n=n-1
-    Xn=Xn1
+        pl.plot(difx, dify, color = "blue")        # 畫 f(x) 在 x=Xn 處的切線Tangent
 
-# ---------最後畫的在最上面---------
-pl.axhline(y = 0, color = "black", label = "X-axis")    # 畫 X 軸
-pl.plot(x, coefficient_y, color = "red", label = "Function")        # 畫 f(x) 圖形
+        pl.vlines(Xn1, 0, Value_coefficient_y(Xn1), colors='green')           # 畫從 y=0 到 y=f(Xn1) 的鉛直線
+        counter -= 1
 
-pl.legend()     # 印出有給定 label 標籤的線段
-pl.show()       # show 出圖片
+        if(abs(Xn-Xn1) < 10**-7):          # 與前次數值差異小於 10^-7
+            break 
 
+        Xn = Xn1
 
+    print("迭代共進行", 500-counter, "次")
 
-# 23x^3-56x^2-964x^1+3049
+    # ---------最後畫的在最上面---------
+    pl.axhline(y = 0, color = "black", label = "X-axis")    # 畫 X 軸
+    pl.plot(x, coefficient_y, color = "red", label = "Function")        # 畫 f(x) 圖形
+
+    pl.legend()     # 印出有給定 label 標籤的線段
+    pl.show()       # show 出圖片
+
+    Xn = float(input("試試其他初始值Xn："))
+
+# 23x^3-56x^2-964x^1+3049  
+# -5~10     |   -2
+# -10~700   |   -3
+
 # 123x^8-89x^6-13x^5+4x^2-789
+
+# -1x^3+3x^2+2x^1+3
+
+# 1x^3-27
+
 # 公式：Xn+1 = Xn - f(Xn)/f'(Xn)
